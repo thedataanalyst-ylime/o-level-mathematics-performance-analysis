@@ -51,8 +51,6 @@ submission/
 ├── charts/
 │   └── generated PNG charts
 │
-├── run_pipeline.py
-├── predict.py
 ├── example_new_students.csv
 ├── requirements.txt
 └── README.md
@@ -66,6 +64,7 @@ submission/
 
 | Module | Purpose |
 |---|---|
+| `run_pipeline.py` | Command-line entry point for training and evaluation |
 | `config.py` | Central configuration for paths, features, random seed, imputation, tuning and model parameters |
 | `data_ingestion.py` | Imports the provided dataset directly from SQLite |
 | `data_preprocessing.py` | Applies categorical standardisation, age treatment and duplicate-record consolidation |
@@ -76,7 +75,7 @@ submission/
 | `visualization.py` | Saves model comparison, diagnostic and interpretation charts as PNG |
 | `reporting.py` | Saves tabular/JSON record-keeping outputs |
 | `pipeline.py` | Orchestrates the complete machine-learning workflow |
-| `run_pipeline.py` | Command-line entry point for training and evaluation |
+
 | `predict.py` | Reuses the saved fitted pipeline on new student records |
 
 </details>
@@ -142,7 +141,7 @@ flowchart TD
 Copy the challenge database to:
 
 ```text
-data/source.db
+data/score.db
 ```
 
 If your downloaded database has a different filename, either rename it to `source.db` or pass its path using `--db`.
