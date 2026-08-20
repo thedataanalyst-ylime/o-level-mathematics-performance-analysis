@@ -1,0 +1,16 @@
+{
+  "database": "/Users/emilysy/Documents/Documents - Emily\u2019s MacBook Pro/03 AI & Data Analytics Bootcamp/80 Fun Challenges/01 DAB Case Challenge 1/o_level_ml_pipeline/data/score.db",
+  "table": "score",
+  "raw_rows": 15900,
+  "clean_rows": 15000,
+  "unique_students": 15000,
+  "model_rows": 14559,
+  "rows_removed_missing_target": 441,
+  "missing_attendance_rate_model": 669,
+  "cca_counts_model": {
+    "Clubs": 3707,
+    "Sports": 3641,
+    "None": 3617,
+    "Arts": 3594
+  }
+}

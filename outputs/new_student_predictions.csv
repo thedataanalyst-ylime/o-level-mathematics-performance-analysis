@@ -1,0 +1,4 @@
+class_size,number_of_siblings,attendance_rate,sleep_duration,hours_per_week,direct_admission,CCA,learning_style,tuition,predicted_final_test,academic_support_flag
+18,0,96,8,8,Yes,Sports,Visual,Yes,80.46448099592676,False
+25,1,90,7,10,No,,Auditory,No,50.30210977583571,True
+30,2,85,6,12,No,Clubs,Visual,Yes,46.729043271782245,True

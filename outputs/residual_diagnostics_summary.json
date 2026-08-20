@@ -1,0 +1,10 @@
+{
+  "Mean_Residual": 0.12457044102839429,
+  "Median_Residual": 0.34519868354395555,
+  "Residual_25pct": -2.323274855662632,
+  "Residual_75pct": 2.6953432819509615,
+  "Within_5_Points_Pct": 75.65247252747253,
+  "Within_10_Points_Pct": 93.09752747252747,
+  "Error_Above_15_Points_Pct": 2.2664835164835164,
+  "Largest_Absolute_Error": 30.59605240076783
+}

@@ -1,0 +1,13 @@
+{
+  "mode": "RandomizedSearchCV",
+  "n_candidates": 40,
+  "cv_folds": 5,
+  "best_mean_cv_r2": 0.8500580321951106,
+  "best_params": {
+    "regressor__max_depth": 10,
+    "regressor__max_features": 1.0,
+    "regressor__min_samples_leaf": 2,
+    "regressor__min_samples_split": 11,
+    "regressor__n_estimators": 384
+  }
+}
