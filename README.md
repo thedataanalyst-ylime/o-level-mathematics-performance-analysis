@@ -38,6 +38,8 @@ submission/
 │   ├── model_evaluation.py
 │   ├── visualization.py
 │   ├── reporting.py
+│   ├── run_pipeline.py
+│   ├── predict.py
 │   └── pipeline.py
 │
 ├── outputs/
@@ -170,7 +172,7 @@ pip install -r requirements.txt
 ##### STEP 4. Run the full pipeline
 
 ```bash
-python run_pipeline.py
+python -m src.run_pipeline
 ```
 
 By default the pipeline runs the Random Forest hyperparameter search.
@@ -180,7 +182,7 @@ By default the pipeline runs the Random Forest hyperparameter search.
 To use the already validated winning parameters from Task 1 instead of repeating the search:
 
 ```bash
-python run_pipeline.py --skip-tuning
+python -m src.run_pipeline --skip-tuning
 ```
 
 </details>
@@ -197,37 +199,37 @@ The pipeline is configurable through both `src/config.py` and command-line argum
 1. To use another database:
 
 ```bash
-python run_pipeline.py --db data/my_database.db
+python -m src.run_pipeline --db data/my_database.db
 ```
 
 2. Specify a SQLite table when multiple tables exist:
 
 ```bash
-python run_pipeline.py --table student_scores
+python -m src.run_pipeline --table student_scores
 ```
 
 3. Change train/test split:
 
 ```bash
-python run_pipeline.py --test-size 0.18
+python -m src.run_pipeline --test-size 0.18
 ```
 
 4. Change random seed:
 
 ```bash
-python run_pipeline.py --random-state 27
+python -m src.run_pipeline --random-state 27
 ```
 
 5. Experiment with mean rather than median numerical imputation:
 
 ```bash
-python run_pipeline.py --numeric-imputer mean
+python -m src.run_pipeline --numeric-imputer mean
 ```
 
 6. Change the illustrative support threshold:
 
 ```bash
-python run_pipeline.py --support-threshold 55
+python -m src.run_pipeline --support-threshold 55
 ```
 
 Important model settings can also be modified centrally in `src/config.py`.
@@ -417,7 +419,7 @@ A successful pipeline run creates:
 After training:
 
 ```bash
-python predict.py --input example_new_students.csv
+python -m src.predict --input example_new_students.csv
 ```
 
 The prediction script loads the saved sklearn Pipeline and creates:
