@@ -6,10 +6,10 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
-from src import config
-from src.data_preprocessing import standardise_categorical_values
-from src.feature_engineering import engineer_features
-from src.model_evaluation import academic_support_flags
+from . import config
+from .data_preprocessing import standardise_categorical_values
+from .feature_engineering import engineer_features
+from .model_evaluation import academic_support_flags
 
 
 def prepare_prediction_data(
