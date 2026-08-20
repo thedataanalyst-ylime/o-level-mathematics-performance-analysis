@@ -1,25 +1,26 @@
-# o-level-mathematics-performance-analysis
-Data analysis of O-Level Mathematics performance, including data quality assessment, cleaning, feature engineering, exploratory analysis, and identification of factors associated with examination outcomes.
-
-
-# DAB Challenge 1 — O-Level Mathematics Performance Analysis
+### DAB Challenge 1: O-Level Mathematics Performance Analysis
 ---
 
-## 1. Project Overview
+<details open>
+<summary><b>🔭 PROJECT OVERVIEW</b></summary></br>
 
 This submission implements a reusable Python-based end-to-end machine learning pipeline for predicting students' O-Level Mathematics examination score (`final_test`).
 
-The pipeline answers the problem statement:
+This analysis aims to answer the following problem statement:
 
 > **How can student academic habits, attendance and lifestyle characteristics be used to predict O-Level mathematics performance and identify students who may benefit from early academic support?**
 
 The intended users of the model output are the **School Academic Support Team / Student Welfare Team**. The predicted score and illustrative support flag are designed as **decision-support signals**, not automated decisions about students.
 
-Task 1 EDA and analytical reasoning are retained in the Jupyter notebook. Task 2 operationalises the selected cleaning rules, feature engineering, preprocessing, model experimentation, optimisation and evaluation as `.py` scripts.
+📒Task 1: EDA and analytical reasoning are retained in the Jupyter notebook. 
+📘Task 2: Operationalises the selected cleaning rules, feature engineering, preprocessing, model experimentation, optimisation and evaluation as `.py` scripts.
+
+</details>
 
 ---
 
-## 2. Submitted Folder Structure
+<details open>
+<summary><b>🗂️ FOLDER STRUCTURE</b></summary></br>
 
 ```text
 submission/
@@ -54,8 +55,12 @@ submission/
 ├── requirements.txt
 └── README.md
 ```
+</details>
 
-### Main modules
+---
+
+<details open>
+<summary><b>💻 MAIN MODULES</b></summary></br>
 
 | Module | Purpose |
 |---|---|
@@ -72,9 +77,12 @@ submission/
 | `run_pipeline.py` | Command-line entry point for training and evaluation |
 | `predict.py` | Reuses the saved fitted pipeline on new student records |
 
+</details>
+
 ---
 
-## 3. Pipeline Design and Logical Flow
+<details open>
+<summary><b>🔄 PIPELINE DESIGN AND LOGICAL FLOW</b></summary></br>
 
 ```mermaid
 flowchart TD
@@ -97,8 +105,12 @@ flowchart TD
     M --> N[Feature Importance]
     N --> O[Save Model / Outputs / PNG Charts]
 ```
+</details>
 
-### Pipeline sequence
+---
+
+<details open>
+<summary><b>🔄 PIPELINE SEQUENCE</b></summary></br>
 
 1. Import data directly from the provided SQLite database.
 2. Standardise identified categorical inconsistencies.
@@ -115,11 +127,15 @@ flowchart TD
 13. Run residual diagnostics and aggregate Random Forest feature importance.
 14. Save the fitted model, CSV/JSON outputs and PNG charts.
 
+</details>
+
 ---
 
-## 4. How to Execute the Pipeline
+<details open>
+<summary><b>🏃🏻‍♂️ HOW TO EXECUTE THE PIPELINE?</b></summary></br>
 
-### 4.1 Place the provided database
+
+##### STEP 1. Copy the database file to the data folder
 
 Copy the challenge database to:
 
@@ -129,7 +145,7 @@ data/source.db
 
 If your downloaded database has a different filename, either rename it to `source.db` or pass its path using `--db`.
 
-### 4.2 Create and activate a virtual environment
+##### STEP 2. Create and activate a virtual environment
 
 macOS / Linux:
 
@@ -145,13 +161,13 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### 4.3 Install dependencies
+##### STEP 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4.4 Run the full pipeline
+##### STEP 4. Run the full pipeline
 
 ```bash
 python run_pipeline.py
@@ -159,7 +175,7 @@ python run_pipeline.py
 
 By default the pipeline runs the Random Forest hyperparameter search.
 
-### Faster reproduction run
+##### For a faster ML reproduction execution
 
 To use the already validated winning parameters from Task 1 instead of repeating the search:
 
@@ -167,59 +183,67 @@ To use the already validated winning parameters from Task 1 instead of repeating
 python run_pipeline.py --skip-tuning
 ```
 
+</details>
+
 ---
 
-## 5. Configurability
+<details open>
+<summary><b>💻 CONFIGURABILITY</b></summary></br>
 
 The pipeline is configurable through both `src/config.py` and command-line arguments.
 
-### Examples
+##### Examples
 
-Use another database:
+1. To use another database:
 
 ```bash
 python run_pipeline.py --db data/my_database.db
 ```
 
-Specify a SQLite table when multiple tables exist:
+2. Specify a SQLite table when multiple tables exist:
 
 ```bash
 python run_pipeline.py --table student_scores
 ```
 
-Change train/test split:
+3. Change train/test split:
 
 ```bash
 python run_pipeline.py --test-size 0.18
 ```
 
-Change random seed:
+4. Change random seed:
 
 ```bash
 python run_pipeline.py --random-state 27
 ```
 
-Experiment with mean rather than median numerical imputation:
+5. Experiment with mean rather than median numerical imputation:
 
 ```bash
 python run_pipeline.py --numeric-imputer mean
 ```
 
-Change the illustrative support threshold:
+6. Change the illustrative support threshold:
 
 ```bash
 python run_pipeline.py --support-threshold 55
 ```
 
-Important model/search settings can also be modified centrally in `src/config.py`.
+Important model settings can also be modified centrally in `src/config.py`.
+
+</details>
 
 ---
 
-## 6. Task 1 EDA Findings and Pipeline Choices
+<details open>
+<summary><b>🔎 EDA FINDINGS AND PIPELINE CHOICES</b></summary></br> 
 
-Task 1 was used to investigate data quality, engineer candidate features, compare predictors with `final_test`, and determine the modelling feature set. Detailed EDA remains in the `.ipynb`; only the decisions needed by the reusable pipeline are summarised here.
+A Exploratory Data Analysis (EDA) was performed to investigate data quality, engineer candidate features, compare predictors with `final_test`, and determine the modelling feature set. 
+Detailed EDA is available in the `eda.ipynb`. 
+Only the decisions needed by the reusable pipeline are summarised here.
 
-### Key data-quality findings
+##### 📝Key Data Quality Findings
 
 - The raw dataset contained duplicate `student_id` records.
 - Duplicate records often contained complementary missing values in `attendance_rate` or `final_test`; the pipeline therefore consolidates records using the available non-null value.
@@ -228,18 +252,21 @@ Task 1 was used to investigate data quality, engineer candidate features, compar
 - Invalid age values were identified; only ages 15 and 16 were considered valid in Task 1.
 - Missing `attendance_rate` values are retained until model preprocessing and imputed using the training-data median.
 
-### Feature engineering
+##### 💻Feature Engineering
 
 Two model-relevant features were created:
 
 - **`sleep_duration`** — calculated from `sleep_time` and `wake_time`.
 - **`class_size`** — calculated as `n_male + n_female`.
 
-`female_ratio` is also calculated for traceability to Task 1 analysis but is not included in the final model because class size provided a more meaningful predictor.
+`female_ratio` is also calculated for traceability during the EDA but is not included in the final model because `class_size` provided a more meaningful predictor.
+
+</details>
 
 ---
 
-## 7. Feature Processing Summary
+<details open>
+<summary><b>☑️ FEATURE PROCESSING SUMMARY</b></summary></br>
 
 | Feature | Type | Processing | Included in Final Model? |
 |---|---|---|---|
@@ -260,21 +287,24 @@ Two model-relevant features were created:
 | `bag_color` | Categorical | Standardised | No — no defensible predictive meaning |
 | `student_id` | Identifier | Used for duplicate consolidation only | No |
 
+</details>
+
 ---
 
-## 8. Choice of Models
+<details open>
+<summary><b>🔎 MODEL SELECTION</b></summary></br>
 
 Three regression algorithms were selected to provide increasing levels of modelling complexity.
 
-### Linear Regression
+##### 📈Linear Regression
 
 Used as a simple and interpretable baseline. It provides a useful reference for determining whether nonlinear models add meaningful predictive value.
 
-### Decision Tree Regression
+##### 🌲Decision Tree Regression
 
 Selected because it can model nonlinear relationships and interactions without requiring linearity assumptions. The initial tree showed strong training performance but a large train-test R² gap, indicating overfitting.
 
-### Random Forest Regression
+##### 🌲🌲🌲Random Forest Regression
 
 Selected as an ensemble alternative to the single Decision Tree. By averaging multiple trees, Random Forest reduced variance and improved predictive performance. It produced the strongest baseline test performance and was therefore selected for hyperparameter optimisation.
 
@@ -296,9 +326,12 @@ min_samples_split = 11
 min_samples_leaf  = 2
 ```
 
+</details>
+
 ---
 
-## 9. Evaluation Metrics
+<details open>
+<summary><b>📊 EVALUATION METRICS</b></summary></br>
 
 Because the target is a continuous Mathematics examination score, regression metrics are used.
 
@@ -310,7 +343,7 @@ Because the target is a continuous Mathematics examination score, regression met
 | **Train-Test R² Gap** | Helps identify overfitting by comparing training and unseen-test performance |
 | **5-Fold Cross-Validation** | Tests model stability across multiple training/validation partitions |
 
-### Reference results from Task 1 notebook
+##### Reference results from Model Evaluation 
 
 | Model | Test R² | Test MAE | Test RMSE |
 |---|---:|---:|---:|
@@ -323,11 +356,14 @@ The Tuned Random Forest also achieved a train-test R² gap of approximately **0.
 
 These notebook results should be compared with the outputs produced by the submitted `.py` pipeline as a reproducibility check.
 
+</details>
+
 ---
 
-## 10. Model Interpretation and Intended Use
+<details open>
+<summary><b>📖 MODEL INTERPRETATION & APPLICATION TO SCHOOLS</b></summary></br>
 
-Task 1 aggregated feature importance indicated that the fitted Tuned Random Forest relied most strongly on:
+The aggregated feature importance indicated that the fitted Tuned Random Forest relied most strongly on:
 
 1. `class_size`
 2. `number_of_siblings`
@@ -341,13 +377,16 @@ The model can support the School Academic Support / Student Welfare Team by gene
 
 The default threshold of 60 used in this code is illustrative and configurable. It should not be interpreted as an official intervention threshold unless adopted by the school.
 
+</details>
+
 ---
 
-## 11. Generated Outputs
+<details open>
+<summary><b>🗂️ OUTPUTS GENERATED</b></summary></br>
 
 A successful pipeline run creates:
 
-### `outputs/`
+##### `outputs/`
 - `df_clean.csv`
 - `df_model.csv`
 - `model_comparison.csv`
@@ -359,18 +398,21 @@ A successful pipeline run creates:
 - model / CV / residual summary JSON files
 - `duplicate_conflicts.csv` if non-critical duplicate disagreements are detected
 
-### `charts/`
+##### `charts/`
 - `ModelComparison_TestR2.png`
 - `Actual_vs_Predicted_O-LevelMathScores.png`
 - `ResidualPlot_TunedRandomForest.png`
 - `AggregatedFeatureImportance_TunedRandomForest.png`
 
-### `models/`
+##### `models/`
 - `tuned_random_forest_pipeline.joblib`
+
+</details>
 
 ---
 
-## 12. Reusing the Trained Model
+<details open>
+<summary><b>🔄 RE-USING THE TRAINED MODEL</b></summary></br>
 
 After training:
 
@@ -391,9 +433,12 @@ with:
 
 The saved sklearn object includes the fitted preprocessing and Random Forest model, ensuring that future data receives the same modelling transformations.
 
+</details>
+
 ---
 
-## 13. Important Interpretation Caveats
+<details open>
+<summary><b>⚠️ IMPORTANT MODEL INTERPRETATION CAVEATS</b></summary></br>
 
 - Model relationships are predictive and should not be interpreted as causal.
 - Feature importance does not prove that changing a variable will change a student's score.
