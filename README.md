@@ -25,7 +25,7 @@ The intended users of the model output are the **School Academic Support Team / 
 ```text
 submission/
 ├── data/
-│   └── source.db
+│   └── score.db
 │
 ├── src/
 │   ├── __init__.py
@@ -51,6 +51,7 @@ submission/
 ├── charts/
 │   └── generated PNG charts
 │
+├── eda.ipynb
 ├── example_new_students.csv
 ├── requirements.txt
 └── README.md
@@ -65,6 +66,7 @@ submission/
 | Module | Purpose |
 |---|---|
 | `run_pipeline.py` | Command-line entry point for training and evaluation |
+| `predict.py` | Reuses the saved fitted pipeline on new student records |
 | `config.py` | Central configuration for paths, features, random seed, imputation, tuning and model parameters |
 | `data_ingestion.py` | Imports the provided dataset directly from SQLite |
 | `data_preprocessing.py` | Applies categorical standardisation, age treatment and duplicate-record consolidation |
@@ -76,7 +78,6 @@ submission/
 | `reporting.py` | Saves tabular/JSON record-keeping outputs |
 | `pipeline.py` | Orchestrates the complete machine-learning workflow |
 
-| `predict.py` | Reuses the saved fitted pipeline on new student records |
 
 </details>
 
@@ -87,7 +88,7 @@ submission/
 
 ```mermaid
 flowchart TD
-    A[SQLite source.db] --> B[Data Ingestion]
+    A[SQLite score.db] --> B[Data Ingestion]
     B --> C[Data Cleaning]
     C --> D[Feature Engineering]
     D --> E[Create Modelling Dataset]
@@ -135,6 +136,7 @@ flowchart TD
 <details open>
 <summary><b>🏃🏻‍♂️ HOW TO EXECUTE THE PIPELINE?</b></summary></br>
 
+Run all commands below from the project's root directory.
 
 ##### STEP 1. Copy the database file to the data folder
 
@@ -144,7 +146,7 @@ Copy the challenge database to:
 data/score.db
 ```
 
-If your downloaded database has a different filename, either rename it to `source.db` or pass its path using `--db`.
+If your downloaded database has a different filename, either rename it to `score.db` or pass its path using `--db`.
 
 ##### STEP 2. Create and activate a virtual environment
 
@@ -240,7 +242,7 @@ Important model settings can also be modified centrally in `src/config.py`.
 <details open>
 <summary><b>🔎 EDA FINDINGS AND PIPELINE CHOICES</b></summary></br> 
 
-A Exploratory Data Analysis (EDA) was performed to investigate data quality, engineer candidate features, compare predictors with `final_test`, and determine the modelling feature set. 
+An Exploratory Data Analysis (EDA) was performed to investigate data quality, engineer candidate features, compare predictors with `final_test`, and determine the modelling feature set. 
 Detailed EDA is available in the `eda.ipynb`. 
 Only the decisions needed by the reusable pipeline are summarised here.
 
@@ -269,24 +271,28 @@ Two model-relevant features were created:
 <details open>
 <summary><b>☑️ FEATURE PROCESSING SUMMARY</b></summary></br>
 
-| Feature | Type | Processing | Included in Final Model? |
-|---|---|---|---|
-| `class_size` | Numerical, engineered | `n_male + n_female`; median imputation if required | Yes |
-| `number_of_siblings` | Numerical | Median imputation if required | Yes |
-| `attendance_rate` | Numerical | Missing values median-imputed within sklearn Pipeline | Yes |
-| `sleep_duration` | Numerical, engineered | Derived from sleep/wake time; median imputation if required | Yes |
-| `hours_per_week` | Numerical | Median imputation if required | Yes |
-| `direct_admission` | Categorical | One-hot encoded | Yes |
-| `CCA` | Categorical | Case-standardised; `None` retained as valid category; one-hot encoded | Yes |
-| `learning_style` | Categorical | One-hot encoded | Yes |
-| `tuition` | Categorical | Standardised; one-hot encoded | Yes |
-| `age` | Numerical | Invalid values converted to missing | No — negligible relationship in EDA |
-| `n_male`, `n_female` | Numerical | Used to engineer `class_size` | No |
-| `female_ratio` | Engineered | Retained for analytical traceability | No |
-| `gender` | Categorical | Standardised | No — negligible outcome differences |
-| `mode_of_transport` | Categorical | Standardised | No — negligible outcome differences |
-| `bag_color` | Categorical | Standardised | No — no defensible predictive meaning |
-| `student_id` | Identifier | Used for duplicate consolidation only | No |
+| Feature | Type | Processing | Included in Final Model? | Aggregated Importance   |
+|---|---|---|---|---|
+| `class_size` | Numerical, engineered | `n_male + n_female`; median imputation if required | Yes | 40.04% |
+| `number_of_siblings` | Numerical | Median imputation if required | Yes | 27.07% |
+| `hours_per_week` | Numerical | Median imputation if required | Yes | 10.69% |
+| `learning_style` | Categorical | One-hot encoded | Yes | 8.04% |
+| `attendance_rate` | Numerical | Missing values median-imputed within sklearn Pipeline | Yes | 5.60% |
+| `tuition` | Categorical | Standardised; one-hot encoded | Yes | 3.44% |
+| `direct_admission` | Categorical | One-hot encoded | Yes | 2.97% |
+| `CCA` | Categorical | Case-standardised; `None` retained as valid category; one-hot encoded | Yes | 2.04% |
+| `sleep_duration` | Numerical, engineered | Derived from sleep/wake time; median imputation if required | Yes | 0.11% |
+| `age` | Numerical | Invalid values converted to missing | No — negligible relationship in EDA | - |
+| `n_male`, `n_female` | Numerical | Used to engineer `class_size` | No | - |
+| `female_ratio` | Engineered | Retained for analytical traceability | No | - |
+| `gender` | Categorical | Standardised | No — negligible outcome differences | - |
+| `mode_of_transport` | Categorical | Standardised | No — negligible outcome differences | - |
+| `bag_color` | Categorical | Standardised | No — no defensible predictive meaning | - |
+| `student_id` | Identifier | Used for duplicate consolidation only | No | - |
+
+**Feature Importance results:** The five highest-ranked predictors account for approximately **91.4%** of the model's aggregated feature importance. These results suggest that class context, home/family context, study habits, learning characteristics and attendance collectively provide useful signals for identifying students who may require additional academic support.
+
+**Causal interpretation caveat:** Feature importance reflects how strongly each predictor contributed to the Random Forest's predictions within this dataset. It does not establish that a predictor causes changes in O-Level Mathematics performance. For example, although class_size has the highest predictive importance, the analysis does not prove that reducing class size would directly improve students' examination scores; other underlying factors may influence both class size and academic performance.
 
 </details>
 
@@ -317,7 +323,7 @@ The final Random Forest is tuned using `RandomizedSearchCV` across:
 - minimum samples per leaf;
 - maximum features considered at a split.
 
-The notebook's selected parameter combination was:
+The final pipeline identified the following best-performing Random Forest parameter combination:
 
 ```text
 n_estimators      = 384
@@ -346,16 +352,18 @@ Because the target is a continuous Mathematics examination score, regression met
 
 ##### Reference results from Model Evaluation 
 
-| Model | Test R² | Test MAE | Test RMSE |
-|---|---:|---:|---:|
-| Linear Regression | 0.571 | 7.394 | 9.202 |
-| Decision Tree | 0.729 | 4.815 | 7.311 |
-| Random Forest | 0.822 | 4.001 | 5.922 |
-| **Tuned Random Forest** | **0.856** | **3.724** | **5.338** |
+| Model | Test R² | Test MAE | Test RMSE | R² Gap
+|---|---:|---:|---:|---:|
+| Linear Regression | 0.571 | 7.394 | 9.205 | 0.009 |
+| Decision Tree | 0.729 | 4.825 | 7.316 | 0.254 |
+| Random Forest | 0.822 | 4.007 | 5.925 | 0.143 |
+| **Tuned Random Forest** | **0.854** | **3.739** | **5.361** | **0.023** |
 
-The Tuned Random Forest also achieved a train-test R² gap of approximately **0.022**. Final 5-fold cross-validation produced a mean validation R² of approximately **0.852**, validation MAE of **3.74**, validation RMSE of **5.36**, and R² standard deviation of **0.006**.
+The results above were generated by the submitted `.py` pipeline. 
+Minor differences from the Task 1 notebook results may arise from the final pipeline implementation and hyperparameter search.
 
-These notebook results should be compared with the outputs produced by the submitted `.py` pipeline as a reproducibility check.
+The Tuned Random Forest also achieved a train-test R² gap of approximately **0.023**. 
+Final 5-fold cross-validation produced a mean validation R² of approximately **0.851**, validation MAE of **3.75**, validation RMSE of **5.38**, and R² standard deviation of **0.005**.
 
 </details>
 
