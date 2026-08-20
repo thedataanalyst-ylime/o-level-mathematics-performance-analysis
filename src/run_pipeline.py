@@ -3,8 +3,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from src import config
-from src.pipeline import run_training_pipeline
+from . import config
+from .pipeline import run_training_pipeline
 
 
 def parse_args() -> argparse.Namespace:
